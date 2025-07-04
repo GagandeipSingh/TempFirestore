@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "514777868359",
-    "project_id": "tempfirebase-afa6e",
-    "storage_bucket": "tempfirebase-afa6e.firebasestorage.app"
+    "project_number": "243906879895",
+    "project_id": "tempfirestore-4a98c",
+    "storage_bucket": "tempfirestore-4a98c.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:514777868359:android:c656f0ce0f2405efc82962",
+        "mobilesdk_app_id": "1:243906879895:android:a85e2f4e319aef995ae4d2",
         "android_client_info": {
           "package_name": "com.example.tempfirestore"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyA4LIJ-f3Yc3L45oSQONpuGrEGNHk-zVPo"
+          "current_key": "AIzaSyB1NAX2kTRIY8TgfQFdf8ir7TkOIYojGQQ"
         }
       ],
       "services": {
