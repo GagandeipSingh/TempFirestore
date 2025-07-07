@@ -6,12 +6,20 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.documentfile.provider.DocumentFile
+import androidx.lifecycle.lifecycleScope
 import com.example.tempfirestore.databinding.ActivityMainBinding
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.Firebase
+import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.firestore
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -135,14 +143,69 @@ class MainActivity : AppCompatActivity() {
 //                    }
 //                }
 //            }
-            collUser.orderBy("name", Query.Direction.DESCENDING).get().addOnSuccessListener { dbSnap->
-                if (dbSnap!=null){
-                    for(doc in dbSnap.documents){
-                        val userObj=doc.toObject(User::class.java)
-                        println("edrr $userObj")
-                    }
-                }
-            }
+//            collUser.orderBy("name", Query.Direction.DESCENDING).get().addOnSuccessListener { dbSnap->
+//                if (dbSnap!=null){
+//                    for(doc in dbSnap.documents){
+//                        val userObj=doc.toObject(User::class.java)
+//                        println("edrr $userObj")
+//                    }
+//                }
+//            }
+
+//            collUser.orderBy("age").startAt(25).get().addOnSuccessListener { dbSnap->
+//                if (dbSnap!=null){
+//                    for(doc in dbSnap.documents){
+//                        val userObj=doc.toObject(User::class.java)
+//                        println("edrr $userObj")
+//                    }
+//                }
+//            }
+//            collUser.orderBy("age").startAfter(19).get().addOnSuccessListener { dbSnap->
+//                if (dbSnap!=null){
+//                    for(doc in dbSnap.documents){
+//                        val userObj=doc.toObject(User::class.java)
+//                        println("edrr $userObj")
+//                    }
+//                }
+
+
+//            collUser.orderBy("age").startAt(25).get().addOnSuccessListener { dbSnap->
+//                if (dbSnap!=null){
+//                    for(doc in dbSnap.documents){
+//                        val userObj=doc.toObject(User::class.java)
+//                        println("edrr $userObj")
+//                    }
+//                }
+//            }
+
+//            collUser.orderBy("name").endAt":T").get().addOnSuccessListener { dbSnap->
+//                if (dbSnap!=null){
+//                    for(doc in dbSnap.documents){
+//                        val userObj=doc.toObject(User::class.java)
+//                        println("edrr $userObj")
+//                    }
+//                }
+//            }
+
+//            collUser.orderBy("age").endBefore(36).limit(3).get().addOnSuccessListener { dbSnap->
+//                if (dbSnap!=null){
+//                    for(doc in dbSnap.documents){
+//                        val userObj=doc.toObject(User::class.java)
+//                        println("edrr $userObj")
+//                    }
+//                }
+//            }
+
+
+//            collUser.orderBy("age").endBefore(36).limitToLast(2).get().addOnSuccessListener { dbSnap->
+//                if (dbSnap!=null){
+//                    for(doc in dbSnap.documents){
+//                        val userObj=doc.toObject(User::class.java)
+//                        println("edrr $userObj")
+//                    }
+//                }
+//            }
+
 //            collUser.add(user2)
 //            collUser.add(user3)
 //            collUser.add(user4)
@@ -227,8 +290,42 @@ class MainActivity : AppCompatActivity() {
 //                    Snackbar.make(binding.root, "Done", Snackbar.LENGTH_SHORT).show()
 //                }
 //            }
+
+
+            val page = 2
+            val lastSnapShot: DocumentSnapshot? = null
+            getPagingResults(collUser, page, lastSnapShot)
+
+
         }
 
+    }
+
+    private fun getPagingResults(
+        collUser: CollectionReference,
+        page: Int,
+        lastSnapShot: DocumentSnapshot?
+    ) {
+        var lastSnapShot: DocumentSnapshot? = lastSnapShot
+        val queryExc: Query = if (lastSnapShot == null) {
+            collUser.limit(page.toLong())
+        } else {
+            collUser.orderBy(FieldPath.documentId()).startAfter(lastSnapShot.id)
+                .limit(page.toLong())
+        }
+        queryExc.get().addOnSuccessListener { dbSnap ->
+            if (dbSnap.documents.isNotEmpty()) {
+                for (doc in dbSnap.documents) {
+                    val user = doc.toObject(User::class.java)
+                    println("edrr $user")
+                }
+
+                lastSnapShot = dbSnap.documents.last()
+                println("edrr $lastSnapShot")
+                getPagingResults(collUser, page, lastSnapShot)
+
+            }
+        }
 
     }
 }
